@@ -1,24 +1,21 @@
 import { Module } from '@nestjs/common';
-import { GitlabHooksController } from './gitlab-hooks/gitlab-hooks.controller';
-import { ConfigService } from './config/config.service';
-import { GitlabConnectorService } from './gitlab-connector/gitlab-connector.service';
-import { HookIdentifierService } from './hook-identifier/hook-identifier.service';
-import { HookValidatorService } from './hook-validator/hook-validator.service';
-import { MessageBuilderService } from './message-builder/message-builder.service';
-import { RuntimeStorageService } from './runtime-storage/runtime-storage.service';
-import { SlackConnectorService } from './slack-connector/slack-connector.service';
+import { GitlabModule } from './gitlab/gitlab.module';
+import { SlackModule } from './slack/slack.module';
+import { StorageModule } from './storage/storage.module';
+import { ConfigModule } from '@nestjs/config';
+import { IntegrationModule } from './integration/integration.module';
+import config from './config';
 
 @Module({
-  imports: [],
-  controllers: [GitlabHooksController],
-  providers: [
-    ConfigService,
-    GitlabConnectorService,
-    HookIdentifierService,
-    HookValidatorService,
-    MessageBuilderService,
-    RuntimeStorageService,
-    SlackConnectorService,
+  imports: [
+    GitlabModule,
+    SlackModule,
+    StorageModule,
+    ConfigModule.forRoot({
+      envFilePath: ['.env.local', '.env'],
+      load: [config]
+    }),
+    IntegrationModule,
   ],
 })
 export class AppModule {}
