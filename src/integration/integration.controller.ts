@@ -35,11 +35,11 @@ export class IntegrationController {
     let hasProcessed = true;
     try {
       if (this.hooks.isMergeRequestHook(gitlabEvent)) {
-        await this.integration.mergeRequest(req.body as MergeRequestEvent);
+        await this.integration.mergeRequest(body as MergeRequestEvent);
       } else if (this.hooks.isNoteHook(gitlabEvent)) {
-        await this.integration.comment(req.body as CommentEvent);
+        await this.integration.comment(body as CommentEvent);
       } else if (this.hooks.isPipelineHook(gitlabEvent)) {
-        await this.integration.pipeline(req.body as PipelineEvent);
+        await this.integration.pipeline(body as PipelineEvent);
       } else {
         hasProcessed = false;
       }
