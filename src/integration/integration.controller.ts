@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Body,
-  Controller,
+  Controller, Get,
   Inject,
   InternalServerErrorException,
   Post,
@@ -21,6 +21,11 @@ export class IntegrationController {
     @Inject(IntegrationService)
     private readonly integration: IntegrationService
   ) {}
+
+  @Get('/')
+  public test() {
+    return 'I do believe it\'s working good.';
+  }
 
   @Post('/')
   public async dispatch(
