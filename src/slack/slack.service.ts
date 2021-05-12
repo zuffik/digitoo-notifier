@@ -16,7 +16,18 @@ export class SlackService {
     );
   }
 
-  public send(message: string) {
-    return this.webhook.send(message);
+  public send(message: string, notificationText?: string) {
+    return this.webhook.send({
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: message
+          }
+        }
+      ],
+      text: notificationText
+    });
   }
 }

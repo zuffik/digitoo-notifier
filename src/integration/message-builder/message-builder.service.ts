@@ -68,6 +68,10 @@ export class MessageBuilderService {
     return result;
   }
 
+  public buildNotificationForCreatedMergeRequest(data: MergeRequestEvent): string {
+    return `New MR for CR: ${data.object_attributes.title}`;
+  }
+
   public buildMessageForApprovedMergeRequest(data: MergeRequestEvent): string {
     const { gitlabToSlack } = this.cfg.get<AppConfig>('app');
     let result = '';
@@ -77,10 +81,18 @@ export class MessageBuilderService {
     return result;
   }
 
+  public buildNotificationForApprovedMergeRequest(data: MergeRequestEvent): string {
+    return `MR ${data.object_attributes.title} was approved`;
+  }
+
   public buildMessageForCodeReviewTitle(data: CommentEvent): string {
     const { gitlabToSlack } = this.cfg.get<AppConfig>('app');
     const title = this.parseProjectReference(data.merge_request);
     return `Hey, ${this.renderMention(gitlabToSlack[data.merge_request.author_id])}, your merge request ${this.renderTitle(title)} has been *commented on*:`;
+  }
+
+  public buildNotificationForCodeReviewTitle(data: CommentEvent): string {
+    return `Comment on ${data.merge_request.title}`;
   }
 
   public buildMessageForCodeReviewMessage(data: CommentEvent): string {
@@ -88,5 +100,9 @@ export class MessageBuilderService {
       label: `${data.object_attributes.position.new_path}:${data.object_attributes.position.new_line}`,
       url: data.object_attributes.url
     })}\n${data.object_attributes.note}`
+  }
+
+  public buildNotificationForCodeReviewMessage(data: CommentEvent): string {
+    return data.object_attributes.note;
   }
 }

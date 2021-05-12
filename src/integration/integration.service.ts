@@ -31,7 +31,8 @@ export class IntegrationService {
       );
       if (!data.object_attributes.work_in_progress) {
         await this.slack.send(
-          this.messageBuilder.buildMessageForCreatedMergeRequest(data)
+          this.messageBuilder.buildMessageForCreatedMergeRequest(data),
+          this.messageBuilder.buildNotificationForCreatedMergeRequest(data)
         );
       }
     }
@@ -40,12 +41,14 @@ export class IntegrationService {
       !data.object_attributes.work_in_progress
     ) {
       await this.slack.send(
-        this.messageBuilder.buildMessageForCreatedMergeRequest(data)
+        this.messageBuilder.buildMessageForCreatedMergeRequest(data),
+        this.messageBuilder.buildNotificationForCreatedMergeRequest(data)
       );
     }
     if (this.hooks.isMergeRequestApproveEvent(data)) {
       await this.slack.send(
-        this.messageBuilder.buildMessageForApprovedMergeRequest(data)
+        this.messageBuilder.buildMessageForApprovedMergeRequest(data),
+        this.messageBuilder.buildNotificationForApprovedMergeRequest(data)
       );
     }
   };
@@ -68,11 +71,13 @@ export class IntegrationService {
         data.object_attributes.created_at
       );
       await this.slack.send(
-        this.messageBuilder.buildMessageForCodeReviewTitle(data)
+        this.messageBuilder.buildMessageForCodeReviewTitle(data),
+        this.messageBuilder.buildNotificationForCodeReviewTitle(data)
       );
     }
     await this.slack.send(
-      this.messageBuilder.buildMessageForCodeReviewMessage(data)
+      this.messageBuilder.buildMessageForCodeReviewMessage(data),
+      this.messageBuilder.buildNotificationForCodeReviewMessage(data)
     );
   };
 

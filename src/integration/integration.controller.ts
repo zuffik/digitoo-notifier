@@ -24,7 +24,7 @@ export class IntegrationController {
 
   @Get('/')
   public test() {
-    return 'I do believe it\'s working good.';
+    return "I do believe it's working good.";
   }
 
   @Post('/')
