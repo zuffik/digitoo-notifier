@@ -1,20 +1,20 @@
 import {
   BadRequestException,
   Body,
-  Controller, Get,
+  Controller,
   Inject,
   InternalServerErrorException,
   Post,
   Req,
   Res
 } from '@nestjs/common';
-import { GitlabHooksService } from '../gitlab/gitlab-hooks/gitlab-hooks.service';
-import { IntegrationService } from './integration.service';
 import { Request, Response } from 'express';
-import { CommentEvent, MergeRequestEvent, PipelineEvent } from '../types';
+import { CommentEvent, MergeRequestEvent, PipelineEvent } from '../../types';
+import { GitlabHooksService } from '../../gitlab/gitlab-hooks/gitlab-hooks.service';
+import { IntegrationService } from '../integration.service';
 
-@Controller()
-export class IntegrationController {
+@Controller('webhooks')
+export class WebhooksController {
   constructor(
     @Inject(GitlabHooksService)
     private readonly hooks: GitlabHooksService,
@@ -22,13 +22,8 @@ export class IntegrationController {
     private readonly integration: IntegrationService
   ) {}
 
-  @Get('/')
-  public test() {
-    return "I do believe it's working good.";
-  }
-
-  @Post('/')
-  public async dispatch(
+  @Post('gitlab')
+  public async gitlab(
     @Req() req: Request,
     @Body() body: MergeRequestEvent | CommentEvent | PipelineEvent,
     @Res() res: Response
