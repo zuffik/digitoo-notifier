@@ -1,4 +1,6 @@
 export interface JiraConfig {
-  taskBaseUrl: string;
+  taskDomain: string;
   taskPrefix: string;
+  apiToken: string;
+  email: string;
 }

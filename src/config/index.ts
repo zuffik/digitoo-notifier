@@ -22,8 +22,10 @@ export default (): Setup => {
       members: ['U01DJACKEKW', 'U01RENUTSQ5'],
     },
     jira: {
-      taskBaseUrl: 'https://digitoo.atlassian.net/browse/',
+      taskDomain: 'digitoo.atlassian.net',
       taskPrefix: 'DIG',
+      email: 'kristian.zuffa@digitoo.cz',
+      apiToken: env.JIRA_API_TOKEN
     },
   };
   setup.app.gitlabToSlack = setup.app.gitlabToSlack || {};

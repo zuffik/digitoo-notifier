@@ -13,10 +13,11 @@ import { GitlabDispatcherMiddleware } from '../gitlab/gitlab-dispatcher.middlewa
 import { GitlabController } from './gitlab/gitlab.controller';
 import { IntegrationStorageService } from './integration-storage/integration-storage.service';
 import { StorageModule } from '../storage/storage.module';
+import { JiraModule } from '../jira/jira.module';
 
 @Module({
   providers: [MessageBuilderService, IntegrationStorageService],
-  imports: [StorageModule, ConfigModule, SlackModule, GitlabModule],
+  imports: [StorageModule, ConfigModule, SlackModule, GitlabModule, JiraModule],
   controllers: [WebhooksController, GitlabController],
 })
 export class IntegrationModule implements NestModule {

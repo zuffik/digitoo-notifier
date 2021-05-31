@@ -38,7 +38,7 @@ export class MessageBuilderService {
               ...result,
               result.length > 0 && {
                 label: match[0],
-                url: jiraConfig.taskBaseUrl + match[0]
+                url: `https://${jiraConfig.taskDomain}/browse/${match[0]}`
               },
               {
                 label: part,
