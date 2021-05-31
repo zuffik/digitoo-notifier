@@ -57,15 +57,9 @@ export class MessageBuilderService {
     parts.map(this.renderLink).join(' ');
 
   public buildMessageForCreatedMergeRequest(data: MergeRequestEvent): string {
-    const { gitlabToSlack } = this.cfg.get<AppConfig>('app');
     let result = '';
     const title = this.parseProjectReference(data.object_attributes);
-    const assignees = Object.entries(gitlabToSlack)
-      .filter(([gitlabId]) => parseInt(gitlabId) !== data.user.id)
-      .map(([, slackId]) => slackId);
-    result += `Hey, ${assignees
-      .map(this.renderMention)
-      .join(', ')} here's *new MR ready for code review*: ${this.renderTitle(
+    result += `Hey, <!here> here's *new MR ready for code review*: ${this.renderTitle(
       title
     )}\n`;
     result += data.object_attributes.description;
@@ -95,23 +89,12 @@ export class MessageBuilderService {
     return `MR ${data.object_attributes.title} was approved`;
   }
 
-  public buildMessageForCodeReviewTitle(data: CommentEvent): string {
-    const { gitlabToSlack } = this.cfg.get<AppConfig>('app');
-    const title = this.parseProjectReference(data.merge_request);
-    return `Hey, ${this.renderMention(
-      gitlabToSlack[data.merge_request.author_id]
-    )}, your merge request ${this.renderTitle(title)} has been *commented on*:`;
-  }
-
-  public buildNotificationForCodeReviewTitle(data: CommentEvent): string {
-    return `Comment on ${data.merge_request.title}`;
-  }
-
   public buildMessageForCodeReviewMessage(data: CommentEvent): string {
-    return `${this.renderLink({
+    const file = data.object_attributes.position ? this.renderLink({
       label: `${data.object_attributes.position.new_path}:${data.object_attributes.position.new_line}`,
       url: data.object_attributes.url
-    })}\n${data.object_attributes.note}`;
+    }) + '\n' : '';
+    return `${file}${data.object_attributes.note}`;
   }
 
   public buildNotificationForCodeReviewMessage(data: CommentEvent): string {

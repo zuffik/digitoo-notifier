@@ -1,4 +1,6 @@
 export interface SlackConfig {
-  webhookUrl: string;
+  token: string;
   members: string[];
+  channel: string;
+  appName: string;
 }

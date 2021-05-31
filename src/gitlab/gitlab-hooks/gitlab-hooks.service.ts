@@ -40,6 +40,9 @@ export class GitlabHooksService {
     data.changes?.merge_status?.current === 'preparing' &&
     data.changes?.merge_status?.previous === 'unchecked';
 
+  public isMergeRequestToAllowedBranch = (branch: string): boolean =>
+    this.cfg.get<GitlabConfig>('gitlab').targetBranches.includes(branch);
+
   public isMergeRequestMarkAsReadyEvent = (data: MergeRequestEvent): boolean =>
     /^(wip|draft):/i.test(data.changes?.title?.previous || '') &&
     !/^(wip|draft):/i.test(data.changes?.title?.current || '');

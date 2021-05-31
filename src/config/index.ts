@@ -13,9 +13,12 @@ export default (): Setup => {
       baseUrl: 'https://gitlab.com/api/v4',
       members: [1126129, 8427929],
       labels: ['frontend'],
+      targetBranches: ['master']
     },
     slack: {
-      webhookUrl: env.SLACK_WEBHOOK_URL,
+      appName: 'Digitoo Bot',
+      token: env.SLACK_TOKEN,
+      channel: env.SLACK_CHANNEL,
       members: ['U01DJACKEKW', 'U01RENUTSQ5'],
     },
     jira: {

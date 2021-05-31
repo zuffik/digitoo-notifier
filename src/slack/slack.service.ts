@@ -1,33 +1,49 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { WebClient } from '@slack/web-api';
 import { ConfigService } from '@nestjs/config';
 import { SlackConfig } from '../types';
-import { IncomingWebhook } from '@slack/webhook';
+
+type SendMessageOpts = {
+  message: string;
+  notificationText?: string;
+  threadId?: string;
+};
 
 @Injectable()
 export class SlackService {
-  private webhook: IncomingWebhook;
+  private readonly client: WebClient;
+  private readonly channel: string;
+  private readonly appName: string;
 
   constructor(
     @Inject(ConfigService)
     private readonly cfg: ConfigService
   ) {
-    this.webhook = new IncomingWebhook(
-      this.cfg.get<SlackConfig>('slack').webhookUrl
-    );
+    this.client = new WebClient(this.cfg.get<SlackConfig>('slack').token);
+    this.channel = this.cfg.get<SlackConfig>('slack').channel;
+    this.appName = this.cfg.get<SlackConfig>('slack').appName;
   }
 
-  public send(message: string, notificationText?: string) {
-    return this.webhook.send({
+  public async send({
+    message,
+    notificationText,
+    threadId
+  }: SendMessageOpts): Promise<string> {
+    const result = await this.client.chat.postMessage({
+      channel: this.channel,
+      username: this.appName,
       blocks: [
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: message
-          }
-        }
+            text: message,
+          },
+        },
       ],
-      text: notificationText
+      text: notificationText,
+      thread_ts: threadId
     });
+    return result.ts;
   }
 }

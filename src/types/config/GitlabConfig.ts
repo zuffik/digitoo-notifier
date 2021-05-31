@@ -3,4 +3,5 @@ export interface GitlabConfig {
   baseUrl: string;
   labels: string[] | string;
   members: number[];
+  targetBranches: string[];
 }
