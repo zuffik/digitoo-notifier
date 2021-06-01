@@ -57,9 +57,11 @@ export class MessageBuilderService {
     parts.map(this.renderLink).join(' ');
 
   public buildMessageForCreatedMergeRequest(data: MergeRequestEvent): string {
+    const { gitlabToSlack } = this.cfg.get<AppConfig>('app');
     let result = '';
     const title = this.parseProjectReference(data.object_attributes);
-    result += `Hey, <!here> here's *new MR ready for code review*: ${this.renderTitle(
+    const creator = gitlabToSlack[data.object_attributes.author_id];
+    result += `Hey, everybody <!here>: *new MR ready for code review* by ${this.renderMention(creator)} ${this.renderTitle(
       title
     )}\n`;
     result += data.object_attributes.description;
@@ -94,7 +96,7 @@ export class MessageBuilderService {
       label: `${data.object_attributes.position.new_path}:${data.object_attributes.position.new_line}`,
       url: data.object_attributes.url
     }) + '\n' : '';
-    return `${file}${data.object_attributes.note}`;
+    return `*Comment:*\n${file}${data.object_attributes.note}`;
   }
 
   public buildNotificationForCodeReviewMessage(data: CommentEvent): string {
