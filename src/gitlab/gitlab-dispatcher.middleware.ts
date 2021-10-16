@@ -16,6 +16,7 @@ export class GitlabDispatcherMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: () => void) {
     const gitlabEvent = req.header('X-Gitlab-Event');
+    console.log(gitlabEvent, req.body);
     if (!gitlabEvent) {
       throw new BadRequestException('Not a gitlab event');
     }
