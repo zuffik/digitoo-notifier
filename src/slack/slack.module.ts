@@ -5,6 +5,6 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   providers: [SlackService],
   exports: [SlackService],
-  imports: [ConfigModule]
+  imports: [ConfigModule],
 })
 export class SlackModule {}

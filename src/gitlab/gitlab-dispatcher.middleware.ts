@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NestMiddleware,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { GitlabHooksService } from './gitlab-hooks/gitlab-hooks.service';
 
@@ -6,13 +11,8 @@ import { GitlabHooksService } from './gitlab-hooks/gitlab-hooks.service';
 export class GitlabDispatcherMiddleware implements NestMiddleware {
   constructor(
     @Inject(GitlabHooksService)
-    private readonly hooks: GitlabHooksService,
-  ) {
-  }
-
-  private redirectTo(url: string, res: Response) {
-    return res.redirect(308, url);
-  }
+    private readonly hooks: GitlabHooksService
+  ) {}
 
   use(req: Request, res: Response, next: () => void) {
     const gitlabEvent = req.header('X-Gitlab-Event');
@@ -27,5 +27,9 @@ export class GitlabDispatcherMiddleware implements NestMiddleware {
       return this.redirectTo('/gitlab/pipeline', res);
     }
     next();
+  }
+
+  private redirectTo(url: string, res: Response) {
+    return res.redirect(308, url);
   }
 }

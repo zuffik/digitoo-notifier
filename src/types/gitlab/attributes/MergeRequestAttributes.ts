@@ -1,6 +1,5 @@
 import { Project } from '../Project';
 import { Commit } from '../Commit';
-import { User } from '../User';
 
 export interface MergeRequestAttributes {
   id: number;

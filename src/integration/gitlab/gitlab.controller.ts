@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, Inject, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Inject,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { GitlabHooksService } from '../../gitlab/gitlab-hooks/gitlab-hooks.service';
 import { SlackService } from '../../slack/slack.service';
 import { GitlabConnectorService } from '../../gitlab/gitlab-connector/gitlab-connector.service';
@@ -20,14 +27,18 @@ export class GitlabController {
     @Inject(MessageBuilderService)
     private readonly messageBuilder: MessageBuilderService,
     @Inject(IntegrationStorageService)
-    private readonly storage: IntegrationStorageService,
-  ) {
-  }
+    private readonly storage: IntegrationStorageService
+  ) {}
 
   @Post('merge-request')
   @HttpCode(204)
   public async mergeRequest(@Body() data: MergeRequestEvent) {
-    if (!this.hooks.isMergeRequestToAllowedBranch(data.object_attributes.target_branch)) return;
+    if (
+      !this.hooks.isMergeRequestToAllowedBranch(
+        data.object_attributes.target_branch
+      )
+    )
+      return;
     if (this.hooks.isMergeRequestCreateEvent(data)) {
       await this.gitlabConnector.assignLabelToMergeRequest(
         data.project.id,
@@ -40,7 +51,10 @@ export class GitlabController {
             data
           ),
         });
-        this.storage.createThreadForMergeRequest(data.object_attributes.iid, threadId);
+        this.storage.createThreadForMergeRequest(
+          data.object_attributes.iid,
+          threadId
+        );
       }
     }
     if (
@@ -53,7 +67,10 @@ export class GitlabController {
           data
         ),
       });
-      this.storage.createThreadForMergeRequest(data.object_attributes.iid, threadId);
+      this.storage.createThreadForMergeRequest(
+        data.object_attributes.iid,
+        threadId
+      );
     }
     if (this.hooks.isMergeRequestApproveEvent(data)) {
       await this.slack.send({
@@ -61,7 +78,9 @@ export class GitlabController {
         notificationText: this.messageBuilder.buildNotificationForApprovedMergeRequest(
           data
         ),
-        threadId: this.storage.getThreadForMergeRequest(data.object_attributes.iid)
+        threadId: this.storage.getThreadForMergeRequest(
+          data.object_attributes.iid
+        ),
       });
     }
   }
@@ -77,7 +96,7 @@ export class GitlabController {
       notificationText: this.messageBuilder.buildNotificationForCodeReviewMessage(
         data
       ),
-      threadId: this.storage.getThreadForMergeRequest(data.merge_request.iid)
+      threadId: this.storage.getThreadForMergeRequest(data.merge_request.iid),
     });
   }
 

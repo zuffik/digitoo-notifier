@@ -6,8 +6,7 @@ export class WebhooksController {
   constructor(
     @Inject(JiraService)
     private readonly jiraService: JiraService
-  ) {
-  }
+  ) {}
 
   @Post('gitlab')
   @HttpCode(404)

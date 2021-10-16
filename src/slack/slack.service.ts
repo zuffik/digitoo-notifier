@@ -27,7 +27,7 @@ export class SlackService {
   public async send({
     message,
     notificationText,
-    threadId
+    threadId,
   }: SendMessageOpts): Promise<string> {
     const result = await this.client.chat.postMessage({
       channel: this.channel,
@@ -42,7 +42,7 @@ export class SlackService {
         },
       ],
       text: notificationText,
-      thread_ts: threadId
+      thread_ts: threadId,
     });
     return result.ts;
   }

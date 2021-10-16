@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import axios, {AxiosInstance} from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { GitlabConfig, Setup } from '../../types';
 
 @Injectable()
 export class GitlabConnectorService {
   private readonly http: AxiosInstance;
+
   constructor(
     @Inject(ConfigService)
     private readonly cfg: ConfigService<Setup>
@@ -23,12 +24,15 @@ export class GitlabConnectorService {
 
   async assignLabelToMergeRequest(
     idProject: number,
-    idMergeRequest: number,
+    idMergeRequest: number
   ): Promise<void> {
     const { labels } = this.cfg.get<GitlabConfig>('gitlab');
     const label = (Array.isArray(labels) ? labels : [labels]).join(',');
-    await this.http.put(`/projects/${idProject}/merge_requests/${idMergeRequest}`, {
-      labels: label,
-    });
-  };
+    await this.http.put(
+      `/projects/${idProject}/merge_requests/${idMergeRequest}`,
+      {
+        labels: label,
+      }
+    );
+  }
 }

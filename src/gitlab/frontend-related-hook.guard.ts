@@ -14,6 +14,7 @@ export class FrontendRelatedHookGuard implements CanActivate {
     @Inject(GitlabHooksService)
     private readonly hooks: GitlabHooksService
   ) {}
+
   canActivate(
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {

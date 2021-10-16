@@ -6,15 +6,14 @@ export class IntegrationStorageService {
   constructor(
     @Inject(RuntimeStorageService)
     private readonly coreStorage: RuntimeStorageService<{
-      mergeRequestThreads: Record<number, string>
+      mergeRequestThreads: Record<number, string>;
     }>
-  ) {
-  }
+  ) {}
 
   public createThreadForMergeRequest(mrId: number, threadId: string) {
     this.coreStorage.setItem('mergeRequestThreads', {
       ...this.coreStorage.getItem('mergeRequestThreads', {}),
-      [mrId]: threadId
+      [mrId]: threadId,
     });
   }
 

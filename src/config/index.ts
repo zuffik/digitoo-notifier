@@ -13,7 +13,7 @@ export default (): Setup => {
       baseUrl: 'https://gitlab.com/api/v4',
       members: [1126129, 8427929],
       labels: ['frontend'],
-      targetBranches: ['master']
+      targetBranches: ['master'],
     },
     slack: {
       appName: 'Digitoo Bot',
@@ -25,7 +25,7 @@ export default (): Setup => {
       taskDomain: 'digitoo.atlassian.net',
       taskPrefix: 'DIG',
       email: 'kristian.zuffa@digitoo.cz',
-      apiToken: env.JIRA_API_TOKEN
+      apiToken: env.JIRA_API_TOKEN,
     },
   };
   setup.app.gitlabToSlack = setup.app.gitlabToSlack || {};

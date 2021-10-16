@@ -14,7 +14,7 @@ import config from './config';
     StorageModule,
     ConfigModule.forRoot({
       envFilePath: ['.env.local', '.env'],
-      load: [config]
+      load: [config],
     }),
     IntegrationModule,
     JiraModule,

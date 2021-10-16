@@ -5,6 +5,6 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   providers: [JiraService],
   exports: [JiraService],
-  imports: [ConfigModule]
+  imports: [ConfigModule],
 })
 export class JiraModule {}

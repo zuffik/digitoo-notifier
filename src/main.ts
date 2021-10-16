@@ -10,4 +10,5 @@ async function bootstrap() {
   const cfg = app.get<ConfigService<Setup>>(ConfigService);
   await app.listen(cfg.get<AppConfig>('app').port);
 }
+
 bootstrap();

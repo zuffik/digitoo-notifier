@@ -2,10 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   CommentEvent,
   EventBody,
-  GitlabConfig, GitlabEventType, gitlabEventTypes,
+  GitlabConfig,
+  GitlabEventType,
+  gitlabEventTypes,
   MergeRequestAttributes,
   MergeRequestEvent,
-  PipelineEvent, Setup
+  PipelineEvent,
+  Setup,
 } from '../../types';
 import { ConfigService } from '@nestjs/config';
 
@@ -14,11 +17,12 @@ export class GitlabHooksService {
   constructor(
     @Inject(ConfigService)
     private readonly cfg: ConfigService<Setup>
-  ) {
-  }
+  ) {}
+
   public isGitlabEventType = (
     eventType: string
-  ): eventType is GitlabEventType => gitlabEventTypes.includes(eventType as any);
+  ): eventType is GitlabEventType =>
+    gitlabEventTypes.includes(eventType as any);
 
   public isMergeRequestEventBody = (
     body: EventBody
@@ -30,9 +34,8 @@ export class GitlabHooksService {
 
   public isNoteHook = (hook: string): hook is 'Note Hook' =>
     hook === 'Note Hook';
-  public isMergeRequestHook = (
-    hook: string
-  ): hook is 'Merge Request Hook' => hook === 'Merge Request Hook';
+  public isMergeRequestHook = (hook: string): hook is 'Merge Request Hook' =>
+    hook === 'Merge Request Hook';
   public isPipelineHook = (hook: string): hook is 'Pipeline Hook' =>
     hook === 'Pipeline Hook';
 
@@ -50,6 +53,40 @@ export class GitlabHooksService {
   public isMergeRequestApproveEvent = (data: MergeRequestEvent): boolean =>
     data.object_attributes.action === 'approved';
 
+  public isFrontendRelatedHook = (data: EventBody): boolean => {
+    const relations = this.cfg.get<GitlabConfig>('gitlab');
+    if (this.isMergeRequestEventBody(data)) {
+      return Boolean(
+        data.labels.findIndex((l) => relations.labels.includes(l.title)) >= 0 ||
+          relations.members.includes(data.user.id) ||
+          this.isMergeRequestRelatedToFrontend(
+            data.object_attributes,
+            relations.members
+          )
+      );
+    } else if (this.isCommentEventBody(data)) {
+      return Boolean(
+        data.merge_request &&
+          this.isMergeRequestRelatedToFrontend(
+            data.merge_request,
+            relations.members
+          )
+      );
+    } else if (this.isPipelineEventBody(data)) {
+      return Boolean(
+        data.merge_request &&
+          this.isMergeRequestRelatedToFrontend(
+            data.merge_request,
+            relations.members
+          )
+      );
+    }
+    return false;
+  };
+
+  public isCommentHookCodeReview = (data: CommentEvent): boolean =>
+    data.merge_request.author_id !== data.object_attributes.author_id;
+
   private isMergeRequestRelatedToFrontend = (
     mr: MergeRequestAttributes,
     members: number[]
@@ -59,34 +96,4 @@ export class GitlabHooksService {
       members.includes(mr.assignee_id) ||
       members.includes(mr.author_id)
     );
-
-  public isFrontendRelatedHook = (
-    data: EventBody,
-  ): boolean => {
-    const relations = this.cfg.get<GitlabConfig>('gitlab');
-    if (this.isMergeRequestEventBody(data)) {
-      return Boolean(
-        data.labels.findIndex((l) => relations.labels.includes(l.title)) >= 0 ||
-        relations.members.includes(data.user.id) ||
-        this.isMergeRequestRelatedToFrontend(
-          data.object_attributes,
-          relations.members
-        )
-      );
-    } else if (this.isCommentEventBody(data)) {
-      return Boolean(
-        data.merge_request &&
-        this.isMergeRequestRelatedToFrontend(data.merge_request, relations.members)
-      );
-    } else if (this.isPipelineEventBody(data)) {
-      return Boolean(
-        data.merge_request &&
-        this.isMergeRequestRelatedToFrontend(data.merge_request, relations.members)
-      );
-    }
-    return false;
-  };
-
-  public isCommentHookCodeReview = (data: CommentEvent): boolean =>
-    data.merge_request.author_id !== data.object_attributes.author_id;
 }

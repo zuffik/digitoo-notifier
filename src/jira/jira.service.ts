@@ -17,14 +17,16 @@ export class JiraService {
     this.jira = new JiraClient({
       host: jira.taskDomain,
       basic_auth: {
-        base64: btoa(jira.email + ':' + jira.apiToken)
-      }
+        base64: btoa(jira.email + ':' + jira.apiToken),
+      },
     });
     this.taskPrefix = jira.taskPrefix;
   }
 
   public async getIssue(id: string) {
-    const issue = id.startsWith(this.taskPrefix) ? id : `${this.taskPrefix}-${id}`;
-    return await this.jira.issue.getIssue({issueKey: issue});
+    const issue = id.startsWith(this.taskPrefix)
+      ? id
+      : `${this.taskPrefix}-${id}`;
+    return await this.jira.issue.getIssue({ issueKey: issue });
   }
 }
