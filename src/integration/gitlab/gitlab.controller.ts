@@ -103,7 +103,6 @@ export class GitlabController {
   @Post('pipeline')
   @HttpCode(204)
   public async pipeline(@Body() data: PipelineEvent) {
-    if (!this.hooks.isFrontendRelatedHook(data)) return;
     console.log('pipeline');
     console.log(JSON.stringify(data));
   }
