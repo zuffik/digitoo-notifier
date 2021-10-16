@@ -107,6 +107,13 @@ export class GitlabController {
   @Post('pipeline')
   @HttpCode(204)
   public async pipeline(@Body() data: PipelineEvent) {
+    console.log('pipeline');
+    console.log(JSON.stringify(data));
+    console.log({
+      reportingOn: this.hooks.isReportingOnForPipelineBranch(data.object_attributes.ref),
+      source: data.object_attributes.source,
+      finishedAt: data.object_attributes.finished_at
+    });
     if (
       !this.hooks.isReportingOnForPipelineBranch(data.object_attributes.ref) ||
       data.object_attributes.source !== 'web' ||
@@ -119,7 +126,5 @@ export class GitlabController {
       message: this.messageBuilder.buildMessageForPipeline(data),
       notificationText: this.messageBuilder.buildNotificationForPipeline(data),
     });
-    console.log('pipeline');
-    console.log(JSON.stringify(data));
   }
 }
