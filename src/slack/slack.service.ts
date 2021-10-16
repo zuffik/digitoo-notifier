@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { WebClient } from '@slack/web-api';
 import { ConfigService } from '@nestjs/config';
-import { SlackConfig } from '../types';
+import { AppConfig, SlackConfig } from "../types";
 
 type SendMessageOpts = {
   message: string;
@@ -45,5 +45,10 @@ export class SlackService {
       thread_ts: threadId,
     });
     return result.ts;
+  }
+
+  public creatorExistsInSlack(authorId: number) {
+    const { gitlabToSlack } = this.cfg.get<AppConfig>('app');
+    return !!gitlabToSlack[authorId];
   }
 }

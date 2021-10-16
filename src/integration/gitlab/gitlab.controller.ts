@@ -15,7 +15,6 @@ import { FrontendRelatedHookGuard } from '../../gitlab/frontend-related-hook.gua
 import { IntegrationStorageService } from '../integration-storage/integration-storage.service';
 
 @Controller('gitlab')
-@UseGuards(FrontendRelatedHookGuard)
 export class GitlabController {
   constructor(
     @Inject(GitlabHooksService)
@@ -28,15 +27,19 @@ export class GitlabController {
     private readonly messageBuilder: MessageBuilderService,
     @Inject(IntegrationStorageService)
     private readonly storage: IntegrationStorageService
-  ) {}
+  ) {
+  }
 
   @Post('merge-request')
   @HttpCode(204)
+  @UseGuards(FrontendRelatedHookGuard)
   public async mergeRequest(@Body() data: MergeRequestEvent) {
     if (
-      !this.hooks.isMergeRequestToAllowedBranch(
+      !this.hooks.isMergeRequestFromAllowedToAllowedBranch(
+        data.object_attributes.source_branch,
         data.object_attributes.target_branch
-      )
+      ) ||
+      !this.slack.creatorExistsInSlack(data.object_attributes.author_id)
     )
       return;
     if (this.hooks.isMergeRequestCreateEvent(data)) {
@@ -87,6 +90,7 @@ export class GitlabController {
 
   @Post('comment')
   @HttpCode(204)
+  @UseGuards(FrontendRelatedHookGuard)
   public async comment(@Body() data: CommentEvent) {
     if (!this.hooks.isCommentHookCodeReview(data)) {
       return;
@@ -103,6 +107,18 @@ export class GitlabController {
   @Post('pipeline')
   @HttpCode(204)
   public async pipeline(@Body() data: PipelineEvent) {
+    if (
+      !this.hooks.isReportingOnForPipelineBranch(data.object_attributes.ref) ||
+      data.object_attributes.source !== 'web' ||
+      !data.object_attributes.finished_at
+    ) {
+      return;
+    }
+
+    await this.slack.send({
+      message: this.messageBuilder.buildMessageForPipeline(data),
+      notificationText: this.messageBuilder.buildNotificationForPipeline(data),
+    });
     console.log('pipeline');
     console.log(JSON.stringify(data));
   }

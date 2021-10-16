@@ -3,5 +3,7 @@ export interface GitlabConfig {
   baseUrl: string;
   labels: string[] | string;
   members: number[];
-  targetBranches: string[];
+  targetBranchesWhitelist: string[];
+  sourceBranchesBlacklist: string[];
+  reportPipelinesBranches: string[];
 }

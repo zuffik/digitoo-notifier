@@ -5,9 +5,9 @@ import {
   JiraConfig,
   LinkPart,
   MergeRequestAttributes,
-  MergeRequestEvent,
-  Setup,
-} from '../../types';
+  MergeRequestEvent, PipelineEvent,
+  Setup
+} from "../../types";
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -105,4 +105,12 @@ export class MessageBuilderService {
 
   private renderTitle = (parts: LinkPart[]): string =>
     parts.map(this.renderLink).join(' ');
+
+  public buildMessageForPipeline(data: PipelineEvent): string {
+    return `*Pipeline* for branch \`${data.object_attributes.ref}\` has ${data.object_attributes.detailed_status}.`;
+  }
+
+  public buildNotificationForPipeline(data: PipelineEvent): string {
+    return `Pipeline for branch ${data.object_attributes.ref} has ${data.object_attributes.detailed_status}.`;
+  }
 }

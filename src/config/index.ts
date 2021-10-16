@@ -13,7 +13,9 @@ export default (): Setup => {
       baseUrl: 'https://gitlab.com/api/v4',
       members: [1126129, 8427929],
       labels: ['frontend'],
-      targetBranches: ['master'],
+      sourceBranchesBlacklist: ['test', 'preprod', 'prod'],
+      targetBranchesWhitelist: ['master', 'test', 'preprod', 'prod'],
+      reportPipelinesBranches: ['master', 'test', 'preprod', 'prod'],
     },
     slack: {
       appName: 'Digitoo Bot',

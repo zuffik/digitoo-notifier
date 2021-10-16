@@ -13,4 +13,5 @@ export interface PipelineAttributes {
   finished_at: string;
   duration: number;
   variables: Variable[];
+  detailed_status?: string;
 }
