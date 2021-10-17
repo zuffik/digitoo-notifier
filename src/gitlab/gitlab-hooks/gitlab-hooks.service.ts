@@ -53,6 +53,7 @@ export class GitlabHooksService {
     !this.cfg
       .get<GitlabConfig>('gitlab')
       .sourceBranchesBlacklist.includes(source);
+
   public isReportingOnForPipelineBranch = (branch: string): boolean =>
     this.cfg
       .get<GitlabConfig>('gitlab')

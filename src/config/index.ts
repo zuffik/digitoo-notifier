@@ -13,7 +13,7 @@ export default (): Setup => {
       baseUrl: 'https://gitlab.com/api/v4',
       members: [1126129, 8427929],
       labels: ['frontend'],
-      sourceBranchesBlacklist: ['test', 'preprod', 'prod'],
+      sourceBranchesBlacklist: ['master', 'test', 'preprod', 'prod'],
       targetBranchesWhitelist: ['master', 'test', 'preprod', 'prod'],
       reportPipelinesBranches: ['master', 'test', 'preprod', 'prod'],
     },
