@@ -107,10 +107,9 @@ export class GitlabController {
   @Post('pipeline')
   @HttpCode(204)
   public async pipeline(@Body() data: PipelineEvent) {
-    console.log({source: data.object_attributes.source });
     if (
       !this.hooks.isReportingOnForPipelineBranch(data.object_attributes.ref) ||
-      data.object_attributes.source !== 'web' ||
+      data.object_attributes.source !== 'merge_request_event' ||
       !data.object_attributes.finished_at
     ) {
       return;
