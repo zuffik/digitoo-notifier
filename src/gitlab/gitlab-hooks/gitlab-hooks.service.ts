@@ -49,10 +49,10 @@ export class GitlabHooksService {
   ): boolean =>
     this.cfg
       .get<GitlabConfig>('gitlab')
-      .targetBranchesWhitelist.includes(target) &&
+      .targetBranchesWhitelist.some(branch => typeof branch === 'string' ? (target === branch) : branch.test(target)) &&
     !this.cfg
       .get<GitlabConfig>('gitlab')
-      .sourceBranchesBlacklist.includes(source);
+      .sourceBranchesBlacklist.some(branch => typeof branch === 'string' ? (source === branch) : branch.test(source));
 
   public isReportingOnForPipelineBranch = (branch: string): boolean =>
     this.cfg
